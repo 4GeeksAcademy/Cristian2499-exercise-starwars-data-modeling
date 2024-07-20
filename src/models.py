@@ -19,37 +19,39 @@ class User(Base):
     firstname = Column(String(250), nullable=False)
     lastname = Column(String(250), nullable=False)
     email = Column(String(250), nullable=False)
-    post = relationship("post", backref="user")
-    comment = relationship("comment", backref="user")
-    follower = relationship("follower", backref="user")
-    follower = relationship("follower", backref="user")
+    password = Column(String(250), nullable=False)
+    planet = relationship("planet", backref="user")
+    character = relationship("character", backref="user")
+    favorite = relationship("favorite", backref="user")
 
-class Follower(Base):
-    __tablename__ = 'follower'
-    id = Column(Integer, primary_key=True)
-    user_from_id = (Integer, ForeignKey("user.id"))
-    user_to_id = (Integer, ForeignKey("user.id"))
-
-class Post(Base):
-    __tablename__ = 'post'
+class Planet(Base):
+    __tablename__ = 'planet'
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey("user.id"))
-    media = relationship("media", backref="post")
-    comment = relationship("comment", backref="post") 
+    favorite = relationship("favorite", backref="planet")
+    media = relationship("media", backref="planet")
+
+class Character(Base):
+    __tablename__ = 'character'
+    id = Column(Integer, primary_key=True)
+    user_id = Column(Integer, ForeignKey("user.id"))
+    favorite = relationship("favorite", backref="character")
+    media = relationship("media", backref="character")
 
 class Media(Base):
     __tablename__ = 'media'
     id = Column(Integer, primary_key=True)
     mediatype = Column(sqlalchemy_enum(MediaEnum))
     url = Column(String(250), nullable=False)
-    post_id = Column(Integer, ForeignKey("post.id"))
-
-class Comment(Base):
-    __tablename__ = 'comment'
+    planet_id = Column(Integer, ForeignKey("planet.id"))
+    character_id = Column(Integer, ForeignKey("character.id"))
+    
+class Favorite(Base):
+    __tablename__ = 'favorite'
     id = Column(Integer, primary_key=True)
-    comment_text = Column(String(250), nullable=False)
     author_id = Column(Integer, ForeignKey("user.id"))
-    post_id = Column(Integer, ForeignKey("post.id"))
+    planet_id = Column(Integer, ForeignKey("planet.id"))
+    character = Column(Integer, ForeignKey("character.id"))
 
 
     def to_dict(self):
